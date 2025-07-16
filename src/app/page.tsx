@@ -20,21 +20,30 @@ interface IAdvocateData {
 export default function Home() {
   const [advocates, setAdvocates] = useState<IAdvocate[]>([]);
   const [cursor, setCursor] = useState(0);
+  const [pageSize, setPageSize] = useState(5);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     console.log("fetching advocates...");
-    fetch("/api/advocates", {
+    fetchAdvocates();
+  }, []);
+
+  const fetchAdvocates = async () => {
+    const body = JSON.stringify({
+      cursor: cursor,
+      pageSize: pageSize,
+    });
+
+    await fetch("/api/advocates", {
       method: "POST",
-      body: JSON.stringify({
-        cursor: 0,
-      }),
+      body: body,
     }).then((response) => {
       response.json().then((jsonResponse: IAdvocateData) => {
-        setAdvocates(jsonResponse.data);
+        setAdvocates([...advocates, ...jsonResponse.data]);
         setCursor(jsonResponse.cursor);
       });
     });
-  }, []);
+  };
 
   const onChange = (e) => {
     const searchTerm = e.target.value;
@@ -47,16 +56,23 @@ export default function Home() {
         advocate.city.includes(searchTerm) ||
         advocate.degree.includes(searchTerm) ||
         advocate.specialties.includes(searchTerm) ||
-        advocate.yearsOfExperience.includes(searchTerm)
+        advocate.yearsOfExperience === searchTerm
       );
     });
   };
 
   const resetSearch = () => {
-    console.log(advocates);
+    setLoading(true);
+    setCursor(0);
+    setAdvocates([]);
+    fetchAdvocates();
   };
 
   const onSubmit = () => {};
+
+  const loadMoreAdvocates = () => {
+    fetchAdvocates();
+  };
 
   return (
     <>
@@ -79,6 +95,7 @@ export default function Home() {
             </div>
           </div>
         </form>
+
         <table>
           <thead>
             <th>First Name</th>
@@ -109,6 +126,7 @@ export default function Home() {
             })}
           </tbody>
         </table>
+        <button onClick={loadMoreAdvocates}>Load More</button>
       </main>
     </>
   );

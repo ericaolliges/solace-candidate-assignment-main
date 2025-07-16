@@ -1,10 +1,14 @@
 import { asc, gt } from "drizzle-orm";
 import db from "../../../db";
 import { advocates } from "../../../db/schema";
+import { NextRequest } from "next/server";
 
-export async function POST(body: { cursor?: number; pageSize?: number }) {
-  const defaultPageSize = 7;
-  const cursor = body.cursor ?? 0;
+export async function POST(request: NextRequest) {
+  const defaultCursor = 0;
+  const defaultPageSize = 10;
+
+  const body = await request.json();
+  const cursor = body?.cursor ?? defaultCursor;
   const pageSize = body?.pageSize ?? defaultPageSize;
 
   // Uncomment this line to use a database
@@ -15,5 +19,9 @@ export async function POST(body: { cursor?: number; pageSize?: number }) {
     .limit(pageSize)
     .orderBy(asc(advocates.id));
 
-  return Response.json({ data, cursor: cursor + pageSize });
+  return Response.json({
+    data,
+    cursor: cursor + pageSize,
+    body: request.json(),
+  });
 }
