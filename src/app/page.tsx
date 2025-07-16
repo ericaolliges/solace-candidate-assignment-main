@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import HeaderBar from "./components/atoms/HeaderBar";
 import Heading from "./components/atoms/Heading";
 import MainContainer from "./components/atoms/MainContainer";
+import AdvocateResult from "./components/molecules/AdvocateResult";
+import Button from "./components/atoms/Button";
 
-interface IAdvocate {
+export interface IAdvocate {
+  id: number;
   firstName: string;
   lastName: string;
   city: string;
@@ -98,6 +101,12 @@ export default function Home() {
     fetchAdvocates(nextCursor);
   };
 
+  const advocateResults = useMemo(() => {
+    return advocates.map((advocate) => {
+      return <AdvocateResult key={advocate.id} {...advocate} />;
+    });
+  }, [advocates]);
+
   return (
     <>
       <HeaderBar>
@@ -105,21 +114,22 @@ export default function Home() {
       </HeaderBar>
       <MainContainer>
         <form onSubmit={onSubmit}>
-          <div className="flex flex-col  mb-16 gap-2">
+          <div className="flex flex-col mb-20 gap-3">
             <label htmlFor="searchTerm">Search</label>
             <input
               type="text"
               id="searchTerm"
               onChange={onChange}
-              className="bg-transparent border-2 rounded-lg p-1"
+              className="bg-slate-950 border-2 rounded-lg p-1"
             />
             <div className="flex flex-row gap-4 justify-end">
-              <button onClick={resetSearch}>Reset</button>
-              <button type="submit"> Search</button>
+              <Button onClick={resetSearch}>Reset</Button>
+              <Button type="submit"> Search</Button>
             </div>
           </div>
         </form>
 
+        <div className="flex flex-col mb-16 gap-6">{advocateResults}</div>
         <table>
           <thead>
             <th>First Name</th>
@@ -150,10 +160,10 @@ export default function Home() {
             })}
           </tbody>
         </table>
-        <div className="flex flex-row gap-4 justify-end">
-          {cursor > 0 && <button onClick={loadPreviousAdvocates}>Back</button>}
+        <div className="flex flex-row gap-4 mb-24 justify-end">
+          {cursor > 0 && <Button onClick={loadPreviousAdvocates}>Back</Button>}
           {nextCursor < count && (
-            <button onClick={loadNextAdvocates}>Next</button>
+            <Button onClick={loadNextAdvocates}>Next</Button>
           )}
         </div>
       </MainContainer>
