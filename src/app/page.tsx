@@ -15,13 +15,17 @@ interface IAdvocate {
 interface IAdvocateData {
   data: IAdvocate[];
   cursor: number;
+  count: number;
 }
 
+const PAGE_SIZE = 5;
+
 export default function Home() {
+  const [loading, setLoading] = useState(false);
   const [advocates, setAdvocates] = useState<IAdvocate[]>([]);
   const [cursor, setCursor] = useState(0);
-  const [pageSize, setPageSize] = useState(5);
-  const [loading, setLoading] = useState(false);
+  const [nextCursor, setNextCursor] = useState(0);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     console.log("fetching advocates...");
@@ -31,7 +35,7 @@ export default function Home() {
   const fetchAdvocates = async (customCursor?: number) => {
     const body = JSON.stringify({
       cursor: customCursor ?? cursor,
-      pageSize: pageSize,
+      pageSize: PAGE_SIZE,
     });
 
     setLoading(true);
@@ -45,6 +49,8 @@ export default function Home() {
       .then((response) => {
         response.json().then((jsonResponse: IAdvocateData) => {
           setAdvocates(jsonResponse.data);
+          setNextCursor(jsonResponse.cursor);
+          setCount(jsonResponse.count);
         });
       })
       .finally(() => {
@@ -78,15 +84,14 @@ export default function Home() {
   const onSubmit = () => {};
 
   const loadPreviousAdvocates = () => {
-    const newCursor = cursor - pageSize >= 0 ? cursor - pageSize : 0;
+    const newCursor = cursor - PAGE_SIZE >= 0 ? cursor - PAGE_SIZE : 0;
     setCursor(newCursor);
     fetchAdvocates(newCursor);
   };
 
   const loadNextAdvocates = () => {
-    const newCursor = cursor + pageSize;
-    setCursor(newCursor);
-    fetchAdvocates(newCursor);
+    setCursor(nextCursor);
+    fetchAdvocates(nextCursor);
   };
 
   return (
@@ -143,7 +148,9 @@ export default function Home() {
         </table>
         <div className="flex flex-row gap-4 justify-end">
           {cursor > 0 && <button onClick={loadPreviousAdvocates}>Back</button>}
-          <button onClick={loadNextAdvocates}>Next</button>
+          {nextCursor < count && (
+            <button onClick={loadNextAdvocates}>Next</button>
+          )}
         </div>
       </main>
     </>

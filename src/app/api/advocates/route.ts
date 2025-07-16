@@ -19,7 +19,8 @@ export async function POST(request: NextRequest) {
     .limit(pageSize)
     .orderBy(asc(advocates.id));
 
-  const advocateCount = await db.select({ count: count() }).from(advocates);
+  const advocateCountData = await db.select({ count: count() }).from(advocates);
+  const advocateCount = advocateCountData[0].count;
 
   return Response.json({
     data,
