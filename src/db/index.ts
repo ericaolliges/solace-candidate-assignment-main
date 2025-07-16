@@ -7,6 +7,9 @@ const setup = () => {
     return {
       select: () => ({
         from: () => [],
+        where: () => [],
+        limit: () => [],
+        orderBy: () => [],
       }),
     };
   }
