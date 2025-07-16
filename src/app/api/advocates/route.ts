@@ -1,4 +1,4 @@
-import { asc, gt } from "drizzle-orm";
+import { asc, count, gt } from "drizzle-orm";
 import db from "../../../db";
 import { advocates } from "../../../db/schema";
 import { NextRequest } from "next/server";
@@ -19,9 +19,12 @@ export async function POST(request: NextRequest) {
     .limit(pageSize)
     .orderBy(asc(advocates.id));
 
+  const advocateCount = await db.select({ count: count() }).from(advocates);
+
   return Response.json({
     data,
     cursor: cursor + pageSize,
+    count: advocateCount,
     body: request.json(),
   });
 }

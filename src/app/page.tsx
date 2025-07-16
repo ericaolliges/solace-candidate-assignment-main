@@ -28,21 +28,25 @@ export default function Home() {
     fetchAdvocates();
   }, []);
 
-  const fetchAdvocates = async () => {
+  const fetchAdvocates = async (customCursor?: number) => {
     const body = JSON.stringify({
-      cursor: cursor,
+      cursor: customCursor ?? cursor,
       pageSize: pageSize,
     });
 
+    setLoading(true);
     await fetch("/api/advocates", {
       method: "POST",
       body: body,
-    }).then((response) => {
-      response.json().then((jsonResponse: IAdvocateData) => {
-        setAdvocates([...advocates, ...jsonResponse.data]);
-        setCursor(jsonResponse.cursor);
+    })
+      .then((response) => {
+        response.json().then((jsonResponse: IAdvocateData) => {
+          setAdvocates(jsonResponse.data);
+        });
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    });
   };
 
   const onChange = (e) => {
@@ -70,8 +74,16 @@ export default function Home() {
 
   const onSubmit = () => {};
 
-  const loadMoreAdvocates = () => {
-    fetchAdvocates();
+  const loadPreviousAdvocates = () => {
+    const newCursor = cursor - pageSize >= 0 ? cursor - pageSize : 0;
+    setCursor(newCursor);
+    fetchAdvocates(newCursor);
+  };
+
+  const loadNextAdvocates = () => {
+    const newCursor = cursor + pageSize;
+    setCursor(newCursor);
+    fetchAdvocates(newCursor);
   };
 
   return (
@@ -126,7 +138,10 @@ export default function Home() {
             })}
           </tbody>
         </table>
-        <button onClick={loadMoreAdvocates}>Load More</button>
+        <div className="flex flex-row gap-4 justify-end">
+          {cursor > 0 && <button onClick={loadPreviousAdvocates}>Back</button>}
+          <button onClick={loadNextAdvocates}>Next</button>
+        </div>
       </main>
     </>
   );
