@@ -37,6 +37,9 @@ export default function Home() {
     setLoading(true);
     await fetch("/api/advocates", {
       method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
       body: body,
     })
       .then((response) => {
