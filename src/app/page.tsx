@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 
+import HeaderBar from "./components/atoms/HeaderBar";
+import Heading from "./components/atoms/Heading";
+
 interface IAdvocate {
   firstName: string;
   lastName: string;
@@ -96,10 +99,10 @@ export default function Home() {
 
   return (
     <>
-      <header className="h-32 bg-purple-900 col-start-1 col-end-4 md:col-end-8 xl:col-end-12 flex justify-center items-center mb-8">
-        <h1 className="text-3xl">Solace Advocates</h1>
-      </header>
-      <main className="col-start-1 col-end-4 md:col-start-2 md:col-end-7 xl:col-start-3 xl:col-end-10 mr-4 ml-4 md:mr-0 md:ml-0">
+      <HeaderBar>
+        <Heading level={1}>Solace Advocates</Heading>
+      </HeaderBar>
+      <main className="col-start-1 col-end-4 md:col-start-2 md:col-end-7 xl:col-start-3 xl:col-end-10 2xl:col-start-4 2xl:col-end-9 mr-4 ml-4 md:mr-0 md:ml-0">
         <form onSubmit={onSubmit}>
           <div className="flex flex-col  mb-16 gap-2">
             <label htmlFor="searchTerm">Search</label>
