@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import HeaderBar from "./components/atoms/HeaderBar";
 import Heading from "./components/atoms/Heading";
+import MainContainer from "./components/atoms/MainContainer";
 
 interface IAdvocate {
   firstName: string;
@@ -102,7 +103,7 @@ export default function Home() {
       <HeaderBar>
         <Heading level={1}>Solace Advocates</Heading>
       </HeaderBar>
-      <main className="col-start-1 col-end-4 md:col-start-2 md:col-end-7 xl:col-start-3 xl:col-end-10 2xl:col-start-4 2xl:col-end-9 mr-4 ml-4 md:mr-0 md:ml-0">
+      <MainContainer>
         <form onSubmit={onSubmit}>
           <div className="flex flex-col  mb-16 gap-2">
             <label htmlFor="searchTerm">Search</label>
@@ -155,7 +156,7 @@ export default function Home() {
             <button onClick={loadNextAdvocates}>Next</button>
           )}
         </div>
-      </main>
+      </MainContainer>
     </>
   );
 }
