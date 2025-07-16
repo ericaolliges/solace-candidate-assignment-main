@@ -2,8 +2,24 @@
 
 import { useEffect, useState } from "react";
 
+interface IAdvocate {
+  firstName: string;
+  lastName: string;
+  city: string;
+  degree: string;
+  specialties: string[];
+  yearsOfExperience: number;
+  phoneNumber: string;
+}
+
+interface IAdvocateData {
+  data: IAdvocate[];
+  cursor: number;
+}
+
 export default function Home() {
-  const [advocates, setAdvocates] = useState([]);
+  const [advocates, setAdvocates] = useState<IAdvocate[]>([]);
+  const [cursor, setCursor] = useState(0);
 
   useEffect(() => {
     console.log("fetching advocates...");
@@ -13,8 +29,9 @@ export default function Home() {
         cursor: 0,
       }),
     }).then((response) => {
-      response.json().then((jsonResponse) => {
+      response.json().then((jsonResponse: IAdvocateData) => {
         setAdvocates(jsonResponse.data);
+        setCursor(jsonResponse.cursor);
       });
     });
   }, []);

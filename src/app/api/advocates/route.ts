@@ -4,14 +4,16 @@ import { advocates } from "../../../db/schema";
 
 export async function POST(body: { cursor?: number; pageSize?: number }) {
   const defaultPageSize = 7;
+  const cursor = body.cursor ?? 0;
+  const pageSize = body?.pageSize ?? defaultPageSize;
 
   // Uncomment this line to use a database
   const data = await db
     .select()
     .from(advocates)
-    .where(body.cursor ? gt(advocates.id, body.cursor) : undefined)
-    .limit(body?.pageSize ?? defaultPageSize)
+    .where(gt(advocates.id, cursor))
+    .limit(pageSize)
     .orderBy(asc(advocates.id));
 
-  return Response.json({ data });
+  return Response.json({ data, cursor: cursor + pageSize });
 }
