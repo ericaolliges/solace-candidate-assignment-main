@@ -6,9 +6,9 @@ interface NamedTextProps {
   className?: string;
 }
 
-const NamedText: FC<NamedTextProps> = ({ children, className, name }) => {
+const NamedText: FC<NamedTextProps> = ({ children, className = "", name }) => {
   return (
-    <p className={`text-base ${className}`}>
+    <p className={className}>
       <span className="font-bold">{name}: </span>
       {children}
     </p>
