@@ -130,10 +130,12 @@ export default function Home() {
         </form>
         <div className="flex flex-col mb-4 gap-6">{advocateResults}</div>
         <div className="flex flex-row gap-4 mb-24 justify-end">
-          {cursor > 0 && <Button onClick={loadPreviousAdvocates}>Back</Button>}
-          {nextCursor < count && (
-            <Button onClick={loadNextAdvocates}>Next</Button>
-          )}
+          <Button disabled={cursor <= 0} onClick={loadPreviousAdvocates}>
+            Back
+          </Button>
+          <Button disabled={nextCursor >= count} onClick={loadNextAdvocates}>
+            Next
+          </Button>
         </div>
       </MainContainer>
     </>
