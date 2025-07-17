@@ -19,15 +19,23 @@ const AdvocateResult: FC<AdvocateResultProps> = ({
   const fullName = `${firstName} ${lastName}`;
 
   return (
-    <div className="p-8 rounded-lg w-full flex flex-row gap-8 border-2 bg-slate-950">
-      <Avatar name={fullName} className="size-24" />
-      <div className="flex flex-col gap-2">
-        <Heading level={3}>{fullName}</Heading>
-        <NamedText name="Location">{city}</NamedText>
-        <NamedText name="Degree">{degree}</NamedText>
-        <NamedText name="Years of Experience">{yearsOfExperience}</NamedText>
-        <NamedText name="Phone Number">{phoneNumber}</NamedText>
+    <div className="p-8 rounded-lg w-full border-2 bg-slate-950">
+      <div className="flex flex-row gap-8">
+        <Avatar name={fullName} className="size-24 flex-shrink-0" />
+        <div className="flex flex-col gap-2 mb-4 flex-shrink-0">
+          <Heading level={3}>{fullName}</Heading>
+          <NamedText name="Location">{city}</NamedText>
+          <NamedText name="Degree">{degree}</NamedText>
+          <NamedText name="Years of Experience">{yearsOfExperience}</NamedText>
+          <NamedText name="Phone Number">{phoneNumber}</NamedText>
+        </div>
+        <NamedText name="Specialties" className="hidden md:block">
+          {specialties.join(", ")}
+        </NamedText>
       </div>
+      <NamedText name="Specialties" className="md:hidden">
+        {specialties.join(", ")}
+      </NamedText>
     </div>
   );
 };
