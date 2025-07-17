@@ -19,7 +19,7 @@ export default function RootLayout({
       <body
         className={`${inter.className} 
         bg-slate-800 text-gray-100 text-base sm:text-lg 
-        grid columns-4 md:columns-8 xl:columns-12`}
+        grid grid-cols-3 xl:grid-cols-7 2xl:grid-cols-11`}
       >
         {children}
       </body>

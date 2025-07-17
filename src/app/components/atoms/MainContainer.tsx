@@ -8,10 +8,9 @@ const MainContainer: FC<MainContainerProps> = ({ children }) => {
   return (
     <main
       className="col-start-1 col-end-4 
-        lg:col-start-2 lg:col-end-7 
-        xl:col-start-3 xl:col-end-10
-        2xl:col-start-4 2xl:col-end-9
-        mr-6 ml-6 flex flex-col"
+        xl:col-start-2 xl:col-end-7 
+        2xl:col-start-3 2xl:col-end-10
+        mr-6 ml-6 xl:mr-0 xl:ml-0 flex flex-col"
     >
       {children}
     </main>
