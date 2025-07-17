@@ -1,8 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-interface IAdvocate {
+import HeaderBar from "./components/atoms/HeaderBar";
+import Heading from "./components/atoms/Heading";
+import MainContainer from "./components/atoms/MainContainer";
+import AdvocateResult from "./components/molecules/AdvocateResult";
+import Button from "./components/atoms/Button";
+
+export interface IAdvocate {
+  id: number;
   firstName: string;
   lastName: string;
   city: string;
@@ -94,65 +101,43 @@ export default function Home() {
     fetchAdvocates(nextCursor);
   };
 
+  const advocateResults = useMemo(() => {
+    return advocates.map((advocate) => {
+      return <AdvocateResult key={advocate.id} {...advocate} />;
+    });
+  }, [advocates]);
+
   return (
     <>
-      <header className="h-32 bg-purple-900 col-start-1 col-end-4 md:col-end-8 xl:col-end-12 flex justify-center items-center mb-8">
-        <h1 className="text-3xl">Solace Advocates</h1>
-      </header>
-      <main className="col-start-1 col-end-4 md:col-start-2 md:col-end-7 xl:col-start-3 xl:col-end-10 mr-4 ml-4 md:mr-0 md:ml-0">
+      <HeaderBar>
+        <Heading level={1}>Solace Advocates</Heading>
+      </HeaderBar>
+      <MainContainer>
         <form onSubmit={onSubmit}>
-          <div className="flex flex-col  mb-16 gap-2">
+          <div className="flex flex-col mb-20 gap-3">
             <label htmlFor="searchTerm">Search</label>
             <input
               type="text"
               id="searchTerm"
               onChange={onChange}
-              className="bg-transparent border-2 rounded-lg p-1"
+              className="bg-slate-950 border-2 rounded-lg p-1"
             />
             <div className="flex flex-row gap-4 justify-end">
-              <button onClick={resetSearch}>Reset</button>
-              <button type="submit"> Search</button>
+              <Button onClick={resetSearch}>Reset</Button>
+              <Button type="submit"> Search</Button>
             </div>
           </div>
         </form>
-
-        <table>
-          <thead>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>City</th>
-            <th>Degree</th>
-            <th>Specialties</th>
-            <th>Years of Experience</th>
-            <th>Phone Number</th>
-          </thead>
-          <tbody>
-            {advocates.map((advocate) => {
-              return (
-                <tr>
-                  <td>{advocate.firstName}</td>
-                  <td>{advocate.lastName}</td>
-                  <td>{advocate.city}</td>
-                  <td>{advocate.degree}</td>
-                  <td>
-                    {advocate.specialties.map((s) => (
-                      <div>{s}</div>
-                    ))}
-                  </td>
-                  <td>{advocate.yearsOfExperience}</td>
-                  <td>{advocate.phoneNumber}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        <div className="flex flex-row gap-4 justify-end">
-          {cursor > 0 && <button onClick={loadPreviousAdvocates}>Back</button>}
-          {nextCursor < count && (
-            <button onClick={loadNextAdvocates}>Next</button>
-          )}
+        <div className="flex flex-col mb-4 gap-6">{advocateResults}</div>
+        <div className="flex flex-row gap-4 mb-24 justify-end">
+          <Button disabled={cursor <= 0} onClick={loadPreviousAdvocates}>
+            Back
+          </Button>
+          <Button disabled={nextCursor >= count} onClick={loadNextAdvocates}>
+            Next
+          </Button>
         </div>
-      </main>
+      </MainContainer>
     </>
   );
 }
