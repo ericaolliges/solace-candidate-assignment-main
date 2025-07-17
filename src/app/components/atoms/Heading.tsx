@@ -8,17 +8,17 @@ interface HeadingProps {
 const Heading: FC<HeadingProps> = ({ children, level }) => {
   switch (level) {
     case 1:
-      return <h1 className="text-5xl">{children}</h1>;
+      return <h1 className="text-4xl sm:text-5xl">{children}</h1>;
     case 2:
-      return <h2 className="text-4xl">{children}</h2>;
+      return <h2 className="text-3xl sm:text-4xl">{children}</h2>;
     case 3:
-      return <h3 className="text-3xl">{children}</h3>;
+      return <h3 className="text-2xl sm:text-3xl">{children}</h3>;
     case 4:
-      return <h4 className="text-2xl">{children}</h4>;
+      return <h4 className="text-xl sm:text-2xl">{children}</h4>;
     case 5:
-      return <h5 className="text-xl">{children}</h5>;
+      return <h5 className="text-lg sm:text-xl">{children}</h5>;
     case 6:
-      return <h6 className="text-lg">{children}</h6>;
+      return <h6 className="text-base sm:text-lg">{children}</h6>;
   }
 };
 

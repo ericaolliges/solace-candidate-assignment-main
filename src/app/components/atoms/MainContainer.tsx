@@ -11,7 +11,7 @@ const MainContainer: FC<MainContainerProps> = ({ children }) => {
         md:col-start-2 md:col-end-7 
         xl:col-start-3 xl:col-end-10 
         2xl:col-start-4 2xl:col-end-9 
-        mr-4 ml-4 md:mr-0 md:ml-0"
+        mr-6 ml-6 md:mr-0 md:ml-0"
     >
       {children}
     </main>
