@@ -2,11 +2,12 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
+import Button from "./components/atoms/Button";
 import HeaderBar from "./components/atoms/HeaderBar";
 import Heading from "./components/atoms/Heading";
 import MainContainer from "./components/atoms/MainContainer";
 import AdvocateResult from "./components/molecules/AdvocateResult";
-import Button from "./components/atoms/Button";
+import CriteriaSearch from "./components/molecules/CriteriaSearch";
 
 export interface IAdvocate {
   id: number;
@@ -31,12 +32,32 @@ interface IAdvocateData {
 const PAGE_SIZE = 5;
 
 export default function Home() {
-  const [loading, setLoading] = useState(false);
-  const [searchActive, setSearchActive] = useState(false);
   const [advocates, setAdvocates] = useState<IAdvocate[]>([]);
+
+  const [searchActive, setSearchActive] = useState(false);
+  const [searchError, setSearchError] = useState(false);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchCriteria, setSearchCriteria] = useState("");
+
   const [cursor, setCursor] = useState(0);
   const [nextCursor, setNextCursor] = useState(0);
   const [count, setCount] = useState(0);
+
+  const searchTypes = [
+    {
+      key: "specialty",
+      value: "Specialty",
+    },
+    {
+      key: "city",
+      value: "Location",
+    },
+    {
+      key: "name",
+      value: "Name",
+    },
+  ];
 
   useEffect(() => {
     console.log("fetching advocates...");
@@ -49,8 +70,34 @@ export default function Home() {
       pageSize: PAGE_SIZE,
     });
 
-    setLoading(true);
     await fetch("/api/advocates", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: body,
+    }).then((response) => {
+      response.json().then((jsonResponse: IAdvocateData) => {
+        setAdvocates(jsonResponse.data);
+        setNextCursor(jsonResponse.cursor);
+        setCount(jsonResponse.count);
+      });
+    });
+  };
+
+  const searchAdvocates = async (
+    searchCriteria: string,
+    searchTerm: string,
+    customCursor = 0
+  ) => {
+    const body = JSON.stringify({
+      searchCriteria,
+      searchTerm,
+      cursor: customCursor,
+      pageSize: PAGE_SIZE,
+    });
+
+    await fetch("/api/advocates/search", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -58,41 +105,77 @@ export default function Home() {
       body: body,
     })
       .then((response) => {
-        response.json().then((jsonResponse: IAdvocateData) => {
-          setAdvocates(jsonResponse.data);
-          setNextCursor(jsonResponse.cursor);
-          setCount(jsonResponse.count);
-        });
+        response
+          .json()
+          .then((jsonResponse: IAdvocateData) => {
+            setAdvocates(jsonResponse.data);
+
+            setSearchCriteria(searchCriteria);
+            setSearchTerm(searchTerm);
+
+            setCursor(nextCursor);
+            setNextCursor(jsonResponse.cursor);
+            setCount(jsonResponse.count);
+          })
+          .catch((e) => {
+            console.log(e);
+          });
       })
-      .finally(() => {
-        setLoading(false);
+      .catch((e) => {
+        console.log(e);
       });
   };
 
   const resetSearch = () => {
-    setLoading(true);
     setSearchActive(false);
+    setSearchError(false);
     setCursor(0);
+    setNextCursor(0);
+
+    setSearchTerm("");
+    setSearchCriteria("");
     setAdvocates([]);
+
     fetchAdvocates();
   };
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSearchActive(true);
     const formData = new FormData(event.currentTarget);
-    const values = Object.fromEntries(formData);
+
+    const searchTermData = formData.get("searchTerm") as string;
+    const searchCriteriaName = formData.get("searchType");
+    const searchCriteriaData = searchTypes.find(
+      (searchType) => searchType.value === searchCriteriaName
+    );
+
+    if (!searchTermData || !searchCriteriaData?.key) {
+      setSearchError(true);
+      return;
+    }
+
+    await searchAdvocates(searchCriteriaData?.key, searchTermData);
+    setSearchActive(true);
+
+    console.log();
   };
 
   const loadPreviousAdvocates = () => {
     const newCursor = cursor - PAGE_SIZE >= 0 ? cursor - PAGE_SIZE : 0;
-    setCursor(newCursor);
-    fetchAdvocates(newCursor);
+    if (!searchActive) {
+      setCursor(newCursor);
+    }
+
+    searchActive
+      ? searchAdvocates(searchCriteria, searchTerm, cursor)
+      : fetchAdvocates(newCursor);
   };
 
   const loadNextAdvocates = () => {
     setCursor(nextCursor);
-    fetchAdvocates(nextCursor);
+    searchActive
+      ? searchAdvocates(searchCriteria, searchTerm, nextCursor)
+      : fetchAdvocates(nextCursor);
   };
 
   const advocateResults = useMemo(() => {
@@ -110,19 +193,21 @@ export default function Home() {
         <form onSubmit={onSubmit}>
           <div className="flex flex-col mb-20 gap-3">
             <label htmlFor="searchTerm" className="text-lg sm:text-xl">
-              Search
+              Search for an advocate:
             </label>
-            <input
-              type="text"
-              id="searchTerm"
-              name="searchTerm"
-              className="bg-slate-950 border-2 rounded-lg p-1"
+            <CriteriaSearch
+              error={searchError}
+              onChange={(event) => {
+                if (!!event.target.value) {
+                  setSearchError(false);
+                }
+              }}
             />
             <div className="flex flex-row gap-4 justify-end">
               <Button disabled={!searchActive} onClick={resetSearch}>
                 Reset
               </Button>
-              <Button type="submit"> Search</Button>
+              <Button type="submit">Search</Button>
             </div>
           </div>
         </form>
