@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 
 const fieldToSearch = (searchCriteria: string) => {
   switch (searchCriteria) {
-    case "specialties":
+    case "specialty":
       return sql`lower(${advocates.specialties}::text)`;
     case "city":
       return sql`lower(${advocates.city})`;
