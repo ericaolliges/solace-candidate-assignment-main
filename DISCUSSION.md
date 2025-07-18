@@ -12,3 +12,4 @@ For the purposes of this project, the nice to haves I did not perform are:
   - Also searching the db with multiple specialties
 - CMS integration
   - Adding images for each advocate to an integrated CMS
+- Better error handling and cursor functionality when searching advocates
