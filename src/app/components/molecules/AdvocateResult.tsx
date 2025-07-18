@@ -23,7 +23,7 @@ const AdvocateResult: FC<AdvocateResultProps> = ({
       <div className="flex flex-row gap-8">
         <Avatar name={fullName} className="size-24 flex-shrink-0" />
         <div className="flex flex-col gap-2 mb-4 lg:flex-shrink-0">
-          <Heading level={3}>{fullName}</Heading>
+          <Heading level={2}>{fullName}</Heading>
           <NamedText name="Location">{city}</NamedText>
           <NamedText name="Degree">{degree}</NamedText>
           <NamedText name="Years of Experience">{yearsOfExperience}</NamedText>
