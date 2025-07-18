@@ -7,6 +7,7 @@ const CriteriaSearch: FC<{
   return (
     <div className="flex flex-row gap-4 w-full items-start">
       <select
+        aria-label="Select a search type"
         className="bg-transparent border-b-2 pt-2 pb-2 basis-1/4"
         name="searchType"
       >
