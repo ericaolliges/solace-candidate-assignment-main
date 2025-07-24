@@ -113,7 +113,6 @@ export default function Home() {
             setSearchCriteria(searchCriteria);
             setSearchTerm(searchTerm);
 
-            setCursor(nextCursor);
             setNextCursor(jsonResponse.cursor);
             setCount(jsonResponse.count);
           })
@@ -162,12 +161,10 @@ export default function Home() {
 
   const loadPreviousAdvocates = () => {
     const newCursor = cursor - PAGE_SIZE >= 0 ? cursor - PAGE_SIZE : 0;
-    if (!searchActive) {
-      setCursor(newCursor);
-    }
+    setCursor(newCursor);
 
     searchActive
-      ? searchAdvocates(searchCriteria, searchTerm, cursor)
+      ? searchAdvocates(searchCriteria, searchTerm, newCursor)
       : fetchAdvocates(newCursor);
   };
 

@@ -1,4 +1,4 @@
-import { and, asc, count, gt, like, sql } from "drizzle-orm";
+import { and, asc, count, desc, gt, like, sql } from "drizzle-orm";
 import db from "../../../../db";
 import { advocates } from "../../../../db/schema";
 import { NextRequest } from "next/server";
@@ -38,16 +38,20 @@ export async function POST(request: NextRequest) {
     )
     .limit(pageSize)
     .orderBy(asc(advocates.id));
+  const advocateCursor = data.slice(-1)[0];
 
-  const advocateCountData = await db.select({ count: count() }).from(advocates);
-  const advocateCount = advocateCountData[0].count;
-
-  const lastItem = data.slice(-1)[0];
+  const lastAdvocateData = await db
+    .select({ last: advocates.id })
+    .from(advocates)
+    .where(like(field, `%${searchTerm.toLowerCase()}%`))
+    .limit(1)
+    .orderBy(desc(advocates.id));
+  const lastId = lastAdvocateData[0].last;
 
   return Response.json({
     data,
-    cursor: lastItem.id,
-    count: advocateCount,
+    cursor: advocateCursor.id,
+    count: lastId,
     body: request.json(),
   });
 }
